@@ -2,10 +2,11 @@ package main
 
 import (
 	"api.go.com/echo/config"
-	"api.go.com/echo/user/userdomain"
-	"api.go.com/echo/user/userinfraestructure"
+	"api.go.com/echo/routes"
+	_ "api.go.com/echo/user"
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"log"
 	"net/http"
 	"reflect"
@@ -30,7 +31,7 @@ func main() {
 	server.OnConnect("/chat", func(s socketio.Conn) error {
 		//s.SetContext("")
 		log.Println("connected:", s.ID())
-		server.BroadcastToNamespace(s.Namespace(),"welcome", "Se ha unido.")
+		server.BroadcastToNamespace(s.Namespace(), "welcome", "Se ha unido.")
 		return nil
 
 	})
@@ -41,9 +42,9 @@ func main() {
 		s.Emit("reply", "notice message "+msg)
 	})
 
-	server.OnEvent("/chat", "msg", func(s socketio.Conn, msg interface{})  {
+	server.OnEvent("/chat", "msg", func(s socketio.Conn, msg interface{}) {
 		var room = ""
-		var user =  ""
+		var user = ""
 		var msgInterface = ""
 		m, ok := msg.(map[string]interface{})
 		if !ok {
@@ -60,13 +61,13 @@ func main() {
 				msgInterface = v.(string)
 			}
 
-		//fmt.Println(k, "=>", v)
+			//fmt.Println(k, "=>", v)
 		}
 
-	fmt.Println(user)
+		fmt.Println(user)
 
-		userId, err := strconv.ParseInt(s.ID(),10,64)
-		if err !=  nil {
+		userId, err := strconv.ParseInt(s.ID(), 10, 64)
+		if err != nil {
 			log.Fatalf("couldnt parse room to int 16 %s", err)
 		}
 
@@ -74,17 +75,16 @@ func main() {
 		fmt.Println(userFound)
 		if !userFound {
 			fmt.Println("inside !userFound")
-			Users= append(Users, userId)
+			Users = append(Users, userId)
 			fmt.Println("After assign to user array")
 			s.Join(room)
 
 		}
 
-
 		s.SetContext(msg)
 		fmt.Println("connect id", s.ID())
 
-		server.BroadcastToRoom(s.Namespace(),room,"reply-test", msgInterface)
+		server.BroadcastToRoom(s.Namespace(), room, "reply-test", msgInterface)
 
 	})
 
@@ -101,14 +101,13 @@ func main() {
 			fmt.Println(k, "=>", v)
 		}
 
-
 	})
 
 	server.OnEvent("/", "bye", func(s socketio.Conn) string {
 		last := s.Context().(string)
 		s.Emit("bye", last)
-		socketIdInt, err := strconv.ParseInt(s.ID(),10,64)
-		if err !=  nil {
+		socketIdInt, err := strconv.ParseInt(s.ID(), 10, 64)
+		if err != nil {
 			log.Fatalf("couldnt parse room to int 16 %s", err)
 		}
 		findAndDelete(Users, socketIdInt)
@@ -124,8 +123,8 @@ func main() {
 	})
 
 	server.OnDisconnect("/", func(s socketio.Conn, reason string) {
-		socketIdInt, err := strconv.ParseInt(s.ID(),10,64)
-		if err !=  nil {
+		socketIdInt, err := strconv.ParseInt(s.ID(), 10, 64)
+		if err != nil {
 			log.Fatalf("couldnt parse room to int 16 %s", err)
 		}
 		findAndDelete(Users, socketIdInt)
@@ -146,12 +145,12 @@ func main() {
 		}
 	}(server)
 
-
 	e := echo.New()
 
-
 	e.Static("/chat", "public")
-
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
 	e.Any("/socket.io/", func(context echo.Context) error {
 		server.ServeHTTP(context.Response(), context.Request())
 		/*fmt.Println(context.Request())
@@ -159,8 +158,10 @@ func main() {
 		return nil
 	})
 	config.InitializeDB()
-	userdomain.CreateUserDB()
-	userinfraestructure.UserRoutes(e)
+	routes.PrivateRoutes(e)
+	routes.PublicRoutes(e)
+	//user.CreateUserDB()
+	//user.UserRoutes(e)
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
@@ -187,4 +188,3 @@ func findUser(users []int64, item int64) bool {
 	}
 	return userFound
 }
-

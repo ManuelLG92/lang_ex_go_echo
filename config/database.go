@@ -2,18 +2,22 @@ package config
 
 import (
 	"fmt"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
+
 var DbGlobal *gorm.DB
 
-func InitializeDB(){
-	dsn := "root:@tcp(127.0.0.1:3306)/golang?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil{
-		fmt.Println("DB conection error.")
-		panic(err)
+func InitializeDB() *gorm.DB {
+	dsn := "root:@tcp(127.0.0.1:3306)/lang_ex?charset=utf8mb4&parseTime=True&loc=Local"
+	db, err := gorm.Open("mysql", dsn)
+	if err != nil {
+		panic(err.Error())
 	}
-		DbGlobal = db
-		fmt.Println("Connection successfully to database.")
+
+	DbGlobal = db
+
+	fmt.Println("Database connected")
+
+	return DbGlobal
 }

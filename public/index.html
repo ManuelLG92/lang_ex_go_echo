@@ -37,6 +37,7 @@
     s2.on('welcome', function (msg) {
         console.log(msg)
     })
+
     $('form').submit(function(){
 
         s2.emit('msg', {'msg':$('#m').val(), 'room' : '12', 'user': getRandomNumber().toString() }, function(data){
