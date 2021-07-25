@@ -155,15 +155,13 @@ func main() {
 
 	e.Any("/socket.io/", func(context echo.Context) error {
 		server.ServeHTTP(context.Response(), context.Request())
-		/*fmt.Println(context.Request())
-		fmt.Println(context.Response())*/
+
 		return nil
 	})
 	config.InitializeDB()
 	routes.PrivateRoutes(e)
 	routes.PublicRoutes(e)
-	//user.CreateUserDB()
-	//user.UserRoutes(e)
+
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})

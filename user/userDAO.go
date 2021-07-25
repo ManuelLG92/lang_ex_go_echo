@@ -27,7 +27,6 @@ func (user User) DeleteUser() *gorm.DB {
 func (user User) GetAllNativeLanguages() (error, []*NativeLanguages) {
 	var nativeLanguages []*NativeLanguages
 	if err := config.DbGlobal.Where("user_id  = ?", user.ID).Find(&nativeLanguages); err.Error != nil {
-		//log.Fatalf("Couldn't retrieve native languages from DB. Err: %v", err.Error.Error())
 		return echo.NewHTTPError(http.StatusNotFound, "Couldn't retrieve native languages for user %v", strconv.Itoa(int(user.ID))), nativeLanguages
 	}
 
