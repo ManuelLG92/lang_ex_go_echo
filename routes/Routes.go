@@ -14,6 +14,8 @@ func PrivateRoutes(e *echo.Echo) {
 func PublicRoutes(e *echo.Echo) {
 	route := e.Group("/")
 	route.GET("user/:id", user.Show)
+	route.POST("user/native-languages/:user-id", user.StoreUserNativeLanguages)
+	route.POST("user/learning-languages/:user-id", user.StoreUserLearningLanguages)
 	route.POST("user/create", user.Store)
 	route.PUT("user/edit/:id", user.Update)
 	route.POST("login", security.Login)

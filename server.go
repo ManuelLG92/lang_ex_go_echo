@@ -148,9 +148,11 @@ func main() {
 	e := echo.New()
 
 	e.Static("/chat", "public")
+
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
+
 	e.Any("/socket.io/", func(context echo.Context) error {
 		server.ServeHTTP(context.Response(), context.Request())
 		/*fmt.Println(context.Request())

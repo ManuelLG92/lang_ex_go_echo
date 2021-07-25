@@ -2,7 +2,6 @@ package user
 
 import (
 	"api.go.com/echo/country"
-	"github.com/go-playground/validator"
 	"github.com/jinzhu/gorm"
 )
 
@@ -26,28 +25,4 @@ type DTOUser struct {
 	Country     *country.Country `json:"user_country_id" validate:"required"`
 	Gender      *Gender          `json:"user_gender_id" db:"genders"  validate:"required"`
 	Description string           `json:"user_description" gorm:"type:text" validate:"max=255"`
-}
-
-type ErrorResponse struct {
-	FailedField string
-	Tag         string
-	Value       string
-}
-
-func ValidateStruct(user User) []*ErrorResponse {
-
-	var errors []*ErrorResponse
-	validate := validator.New()
-	err := validate.Struct(user)
-
-	if err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
-			var element ErrorResponse
-			element.FailedField = err.StructNamespace()
-			element.Tag = err.Tag()
-			element.Value = err.Param()
-			errors = append(errors, &element)
-		}
-	}
-	return errors
 }

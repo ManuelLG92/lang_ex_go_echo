@@ -7,9 +7,9 @@ import (
 
 type NativeLanguages struct {
 	gorm.Model
-	UserID     uint `json:"user_id_native_language"`
+	UserID     uint `json:"user_id"`
 	User       User
-	LanguageID uint `json:"language_id_native_language"`
+	LanguageID uint `json:"language_id"`
 	Language   language.Language
-	Level      string `json:"level_native_language" validate:"required,min=2,max=10" gorm:"type:varchar(15)"`
+	Level      string `json:"level" validate:"required,min=2,max=10" gorm:"type:varchar(15)"`
 }

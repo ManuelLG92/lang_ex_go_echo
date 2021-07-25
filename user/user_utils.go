@@ -4,6 +4,7 @@ import (
 	"api.go.com/echo/config"
 	"api.go.com/echo/country"
 	"api.go.com/echo/globals"
+	"api.go.com/echo/language"
 	"api.go.com/echo/user/user_models_dto"
 	"fmt"
 	"github.com/labstack/echo/v4"
@@ -114,4 +115,26 @@ func getUserGender(user User) (error, *Gender) {
 	}
 
 	return nil, gender
+}
+
+func checkIfUserExistById(id string) (error, User) {
+	var user User
+	counter := int64(0)
+	if err := config.DbGlobal.Where("id = ?", id).Find(&user).Count(&counter); err != nil {
+		if counter < 1 {
+			return echo.NewHTTPError(http.StatusBadRequest, "User Not found"), user
+		}
+	}
+	return nil, user
+}
+
+func checkIfLanguageIdExists(languageId uint) error {
+	counter := int64(0)
+
+	if err := config.DbGlobal.Where("id = ?", languageId).First(&language.Language{}).Count(&counter); err != nil {
+		if counter < 1 {
+			return echo.NewHTTPError(http.StatusBadRequest, "Language ID not found")
+		}
+	}
+	return nil
 }
