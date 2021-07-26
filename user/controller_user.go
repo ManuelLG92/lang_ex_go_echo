@@ -4,7 +4,6 @@ import (
 	"api.go.com/echo/config"
 	"api.go.com/echo/globals"
 	"api.go.com/echo/globals/password"
-	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
@@ -80,7 +79,6 @@ func Store(c echo.Context) error {
 	}
 
 	userDTO := userInstance.MakeUserDTO()
-	fmt.Println(userDTO)
 
 	return c.JSON(http.StatusCreated, userDTO)
 
@@ -96,7 +94,9 @@ func Update(c echo.Context) error {
 	userSearch := &User{}
 	//var userSearch *User
 
-	config.DbGlobal.First(&userSearch, id)
+	if err := config.DbGlobal.First(&userSearch, id); err.Error != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "User not found")
+	}
 
 	if err := c.Bind(&userSearch); err != nil {
 		return err
@@ -113,7 +113,7 @@ func Update(c echo.Context) error {
 	}
 
 	userUpdatedDTO := userSearch.MakeUserDTO()
-	fmt.Println(userUpdatedDTO)
+
 	return c.JSON(http.StatusAccepted, userUpdatedDTO)
 }
 

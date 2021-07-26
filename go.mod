@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/ManuelLG92/lang_ex_api v0.0.0-20210721061317-3909f4a39da7
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/googollee/go-socket.io v1.6.0

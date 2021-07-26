@@ -15,6 +15,8 @@ type User struct {
 	CountryID   int    `json:"user_country_id" validate:"required"`
 	GenderID    int    `json:"user_gender_id" db:"genders"  validate:"required"`
 	Description string `json:"user_description" gorm:"type:text" validate:"max=255"`
+	IsAdmin     uint8  `json:"is_admin" gorm:"default:0"`
+	IsModerator uint8  `json:"is_moderator" gorm:"default:0"`
 }
 
 type DTOUser struct {

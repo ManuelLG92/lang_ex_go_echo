@@ -8,6 +8,10 @@ import (
 	"strconv"
 )
 
+func MigrateUserTable() {
+	config.DbGlobal.AutoMigrate(&User{})
+}
+
 func (user User) CreateUser() *gorm.DB {
 	return config.DbGlobal.Create(&user)
 }
