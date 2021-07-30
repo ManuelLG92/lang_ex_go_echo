@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"api.go.com/echo/language"
 	"api.go.com/echo/security"
 	"api.go.com/echo/user"
 	"github.com/dgrijalva/jwt-go"
@@ -28,6 +29,7 @@ func PublicRoutes(e *echo.Echo) {
 	route.POST("user/native-languages/:user-id", user.StoreUserNativeLanguages)
 	route.POST("user/learning-languages/:user-id", user.StoreUserLearningLanguages)
 	route.POST("user/create", user.Store)
+	route.GET("languages", language.GetLanguages)
 	route.POST("login", security.Login)
 	user.MigrateUserTable()
 }
