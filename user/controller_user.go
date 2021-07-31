@@ -68,7 +68,7 @@ func Store(c echo.Context) error {
 	counter := int64(0)
 	if err := config.DbGlobal.Where("email = ?", &userInstance.Email).Find(&User{}).Count(&counter); err != nil {
 		if counter > 0 {
-			return echo.NewHTTPError(http.StatusBadRequest, "User already registered with email %V", userInstance.Email)
+			return echo.NewHTTPError(http.StatusConflict, "User already registered with email %V", userInstance.Email)
 		}
 	}
 
