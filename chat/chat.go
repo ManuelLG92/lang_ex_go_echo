@@ -4,7 +4,6 @@ import (
 	"fmt"
 	socketio "github.com/googollee/go-socket.io"
 	"log"
-	"reflect"
 	"strconv"
 )
 
@@ -15,9 +14,7 @@ func SetUpChat(server *socketio.Server) {
 	server.OnConnect("/", func(s socketio.Conn) error {
 		//s.SetContext("")
 		log.Println("connected:", s.ID())
-
 		return nil
-
 	})
 
 	server.OnConnect("/chat", func(s socketio.Conn) error {
@@ -35,6 +32,10 @@ func SetUpChat(server *socketio.Server) {
 	})
 
 	server.OnEvent("/chat", "msg", func(s socketio.Conn, msg interface{}) {
+
+		log.Println("init")
+		log.Println(msg)
+		log.Println("after interface")
 		var room = ""
 		var user = ""
 		var msgInterface = ""
@@ -53,9 +54,11 @@ func SetUpChat(server *socketio.Server) {
 				msgInterface = v.(string)
 			}
 
-			//fmt.Println(k, "=>", v)
+			fmt.Println(k, "=>", v)
 		}
 
+		fmt.Println("before socket id print")
+		fmt.Println(s.ID())
 		fmt.Println(user)
 
 		userId, err := strconv.ParseInt(s.ID(), 10, 64)
@@ -81,10 +84,7 @@ func SetUpChat(server *socketio.Server) {
 	})
 
 	server.OnEvent("/", "echo", func(s socketio.Conn, msg interface{}) {
-		fmt.Println("beforer echo event")
-		fmt.Println(msg)
-		fmt.Println("after echo wriye")
-		fmt.Println(reflect.TypeOf(msg))
+
 		m, ok := msg.(map[string]interface{})
 		if !ok {
 			fmt.Println("error")
@@ -117,7 +117,7 @@ func SetUpChat(server *socketio.Server) {
 	server.OnDisconnect("/", func(s socketio.Conn, reason string) {
 		socketIdInt, err := strconv.ParseInt(s.ID(), 10, 64)
 		if err != nil {
-			log.Fatalf("couldnt parse room to int 16 %s", err)
+			log.Fatalf("couldnt desconection parse room to int 16 %s", err)
 		}
 		findAndDelete(Users, socketIdInt)
 		log.Println("closed", reason)
