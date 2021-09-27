@@ -20,7 +20,8 @@ func SetUpChat(server *socketio.Server) {
 	server.OnConnect("/chat", func(s socketio.Conn) error {
 		//s.SetContext("")
 		log.Println("connected:", s.ID())
-		server.BroadcastToNamespace(s.Namespace(), "welcome", "Se ha unido.")
+		guess := "Se ha unido " + s.ID()
+		server.BroadcastToNamespace(s.Namespace(), "welcome", guess)
 		return nil
 
 	})
@@ -78,8 +79,10 @@ func SetUpChat(server *socketio.Server) {
 
 		s.SetContext(msg)
 		fmt.Println("connect id", s.ID())
+		/*resp, _ :=  json.Marshal(chatResponse{user: s.ID(),message: msgInterface})
+		fmt.Println("response", resp)*/
 
-		server.BroadcastToRoom(s.Namespace(), room, "reply-test", msgInterface)
+		server.BroadcastToRoom(s.Namespace(), room, "reply-test", s.ID(), msgInterface)
 
 	})
 

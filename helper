@@ -1,0 +1,17 @@
+		allowHeaders := "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"
+
+		if origin := c.Request().Header.Get("Origin"); origin != "" {
+			c.Response().Header().Set("Access-Control-Allow-Origin", origin)
+			c.Response().Header().Set("Vary", "Origin")
+			c.Response().Header().Set("Access-Control-Allow-Methods", "POST, PUT, PATCH, GET, DELETE")
+			c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
+			c.Response().Header().Set("Access-Control-Allow-Headers", allowHeaders)
+		}
+		if c.Request().Method == "OPTIONS" {
+			return nil
+		}
+
+		// this takes care of the server side, No Orign no CORS baby
+		c.Response().Header().Del("Origin")
+
+		return c.String(http.StatusOK, "Hello, World!")

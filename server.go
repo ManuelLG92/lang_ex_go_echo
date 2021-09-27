@@ -47,9 +47,23 @@ func main() {
 
 	e.Use(middleware.Recover())
 
-	e.Any("/socket.io/", func(context echo.Context) error {
+	e.Any("/socket.io/", func(c echo.Context) error {
 		fmt.Println("request")
-		server.ServeHTTP(context.Response(), context.Request())
+		/*		allowHeaders := "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"
+
+				if origin := c.Request().Header.Get("Origin"); origin != "" {
+					c.Response().Header().Set("Access-Control-Allow-Origin", origin)
+					c.Response().Header().Set("Vary", "Origin")
+					c.Response().Header().Set("Access-Control-Allow-Methods", "POST, PUT, PATCH, GET, DELETE")
+					c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
+					c.Response().Header().Set("Access-Control-Allow-Headers", allowHeaders)
+				}
+				if c.Request().Method == "OPTIONS" {
+					return nil
+				}
+				// this takes care of the server side, No Orign no CORS baby
+				c.Response().Header().Del("Origin")*/
+		server.ServeHTTP(c.Response(), c.Request())
 		return nil
 	})
 	config.InitializeDB()
