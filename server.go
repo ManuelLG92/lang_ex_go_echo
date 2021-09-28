@@ -12,6 +12,11 @@ import (
 	"net/http"
 )
 
+type responseWs struct {
+	socketId string
+	username string
+}
+
 func main() {
 
 	server := socketio.NewServer(nil)
