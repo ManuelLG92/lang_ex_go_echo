@@ -1,7 +1,8 @@
-package user
+package user_infrastructure_controllers
 
 import (
 	"github.com/labstack/echo/v4"
+	userpack "api.go.com/echo/user"
 	"net/http"
 	"strconv"
 )
@@ -10,12 +11,12 @@ func StoreUserNativeLanguages(c echo.Context) error {
 
 	id := c.Param("user-id")
 
-	err, user := checkIfUserExistById(id)
+	err, user := userpack.CheckIfUserExistById(id)
 	if err != nil {
 		return err
 	}
 
-	var nativeLanguages []*NativeLanguages
+	var nativeLanguages []*userpack.NativeLanguages
 
 	err = c.Bind(&nativeLanguages)
 	if err != nil {
@@ -28,13 +29,13 @@ func StoreUserNativeLanguages(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusBadRequest, "User_id in native language doesn't match,")
 		}
 
-		if err := checkIfLanguageIdExists(language.LanguageID); err != nil {
+		if err := userpack.CheckIfLanguageIdExists(language.LanguageID); err != nil {
 			return echo.NewHTTPError(http.StatusNotFound, "Language "+strconv.Itoa(int(language.LanguageID))+" not found")
 		}
 
 	}
 
-	if err := InsertIntoDbNativeLanguagesFromArray(nativeLanguages); err != nil {
+	if err := userpack.InsertIntoDbNativeLanguagesFromArray(nativeLanguages); err != nil {
 		return err
 	}
 

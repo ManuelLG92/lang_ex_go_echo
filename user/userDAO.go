@@ -2,15 +2,18 @@ package user
 
 import (
 	"api.go.com/echo/config"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 )
 
+var userGlobal *User
+
 func MigrateUserTable() {
 	config.DbGlobal.AutoMigrate(&User{})
 }
+
 
 func (user User) CreateUser() *gorm.DB {
 	return config.DbGlobal.Create(&user)
@@ -20,8 +23,12 @@ func (user User) UpdateUser() *gorm.DB {
 	return config.DbGlobal.Save(&user)
 }
 
-func GetUser(userId int) *gorm.DB {
-	return config.DbGlobal.First(&User{}, userId)
+func GetUser(userId int) (error,*User) {
+	value := config.DbGlobal.First(&userGlobal, userId)
+	if value.Error != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "User %v not found", strconv.Itoa(int(userId))), nil
+	}
+	return nil, userGlobal
 }
 
 func (user User) DeleteUser() *gorm.DB {

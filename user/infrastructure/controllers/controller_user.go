@@ -1,8 +1,9 @@
-package user
+package user_infrastructure_controllers
 
 import (
 	"api.go.com/echo/config"
 	"api.go.com/echo/globals"
+	userpack "api.go.com/echo/user"
 	"api.go.com/echo/globals/password"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -20,13 +21,11 @@ func Show(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	result := GetUser(id)
+	err, user := userpack.GetUser(id)
 
-	if result.Error != nil {
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Invalid User id.")
 	}
-
-	user := result.Value.(*User)
 
 	userDTO := user.MakeUserDTO()
 
@@ -46,12 +45,12 @@ func Show(c echo.Context) error {
 
 	learningLanguagesDTO := user.MakeLearningLanguagesArrayDTO(learningLanguages)
 
-	return c.JSON(http.StatusAccepted, DTOUserResponse{UserDTO: userDTO, LearningLanguagesDTO: learningLanguagesDTO, NativeLanguagesDTO: nativeLanguagesDTO})
+	return c.JSON(http.StatusAccepted, userpack.DTOUserResponse{UserDTO: userDTO, LearningLanguagesDTO: learningLanguagesDTO, NativeLanguagesDTO: nativeLanguagesDTO})
 
 }
 
 func Store(c echo.Context) error {
-	userInstance := new(User)
+	userInstance := new(userpack.User)
 
 	if err := c.Bind(&userInstance); err != nil {
 		return err
@@ -59,14 +58,14 @@ func Store(c echo.Context) error {
 
 	userInstance.Password = password.Generate(userInstance.Password)
 
-	errors := ValidateStruct(*userInstance)
+	errors := userpack.ValidateStruct(*userInstance)
 
 	if errors != nil {
 		return c.JSON(http.StatusBadRequest, errors)
 	}
 
 	counter := int64(0)
-	if err := config.DbGlobal.Where("email = ?", &userInstance.Email).Find(&User{}).Count(&counter); err != nil {
+	if err := config.DbGlobal.Where("email = ?", &userInstance.Email).Find(&userpack.User{}).Count(&counter); err != nil {
 		if counter > 0 {
 			return echo.NewHTTPError(http.StatusConflict, "User already registered with email %V", userInstance.Email)
 		}
@@ -91,7 +90,7 @@ func Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	userSearch := &User{}
+	userSearch := &userpack.User{}
 	//var userSearch *User
 
 	if err := config.DbGlobal.First(&userSearch, id); err.Error != nil {
@@ -102,7 +101,7 @@ func Update(c echo.Context) error {
 		return err
 	}
 
-	errors := ValidateStruct(*userSearch)
+	errors := userpack.ValidateStruct(*userSearch)
 
 	if errors != nil {
 		return c.JSON(http.StatusBadRequest, errors)

@@ -1,11 +1,12 @@
 package user_utils
 
 import (
-	"github.com/ManuelLG92/lang_ex_api/config"
-	"github.com/ManuelLG92/lang_ex_api/country"
-	"github.com/ManuelLG92/lang_ex_api/language"
-	"github.com/ManuelLG92/lang_ex_api/user"
+	"api.go.com/echo/config"
+	"api.go.com/echo/country"
+	"api.go.com/echo/language"
+	"api.go.com/echo/user"
 )
+
 
 func CreateTables() {
 	config.DbGlobal.AutoMigrate(

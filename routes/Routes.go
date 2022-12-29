@@ -3,7 +3,8 @@ package routes
 import (
 	"api.go.com/echo/language"
 	"api.go.com/echo/security"
-	"api.go.com/echo/user"
+	 userControllers "api.go.com/echo/user/infrastructure/controllers"
+	 userPack "api.go.com/echo/user"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -19,19 +20,19 @@ func PrivateRoutes(e *echo.Echo) {
 		ContextKey: "authenticated",
 	}
 	route.Use(middleware.JWTWithConfig(config))
-	route.GET("user/:id", user.Show)
-	route.PUT("user/edit/:id", user.Update, checkIfUserIdBelongsTAuthenticatedUser)
-	route.DELETE("/user/delete", user.Remove)
+	route.GET("user/:id", userControllers.Show)
+	route.PUT("user/edit/:id", userControllers.Update, checkIfUserIdBelongsTAuthenticatedUser)
+	route.DELETE("/user/delete", userControllers.Remove)
 }
 
 func PublicRoutes(e *echo.Echo) {
 	route := e.Group("/")
-	route.POST("user/native-languages/:user-id", user.StoreUserNativeLanguages)
-	route.POST("user/learning-languages/:user-id", user.StoreUserLearningLanguages)
-	route.POST("user/create", user.Store)
+	route.POST("user/native-languages/:user-id", userControllers.StoreUserNativeLanguages)
+	route.POST("user/learning-languages/:user-id", userControllers.StoreUserLearningLanguages)
+	route.POST("user/create", userControllers.Store)
 	route.GET("languages", language.GetLanguages)
 	route.POST("login", security.Login)
-	user.MigrateUserTable()
+	userPack.MigrateUserTable()
 }
 
 func checkIfUserIdBelongsTAuthenticatedUser(next echo.HandlerFunc) echo.HandlerFunc {

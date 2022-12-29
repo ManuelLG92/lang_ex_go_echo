@@ -20,7 +20,7 @@ func (user User) MakeUserDTO() *DTOUser {
 	userDTO.Surname = user.Surname
 	userDTO.Description = user.Description
 	userDTO.Birthday = user.Birthday
-	err, gender := getUserGender(user)
+	err, gender := GetUserGender(user)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -94,7 +94,6 @@ func (user User) MakeLearningLanguagesArrayDTO(learningLanguages []*LearningLang
 	}
 
 	return learningLanguagesDTO
-	//var nativeLanguagesDTO []user_models_dto.NativeLanguagesDTO
 }
 
 func getUserCountry(user User) (error, *country.Country) {
@@ -107,7 +106,7 @@ func getUserCountry(user User) (error, *country.Country) {
 	return nil, countryInstance
 }
 
-func getUserGender(user User) (error, *Gender) {
+func GetUserGender(user User) (error, *Gender) {
 
 	gender := new(Gender)
 	if err := config.DbGlobal.First(&gender, user.GenderID); err != nil {
@@ -117,7 +116,7 @@ func getUserGender(user User) (error, *Gender) {
 	return nil, gender
 }
 
-func checkIfUserExistById(id string) (error, User) {
+func CheckIfUserExistById(id string) (error, User) {
 	var user User
 	counter := int64(0)
 	if err := config.DbGlobal.Where("id = ?", id).Find(&user).Count(&counter); err != nil {
@@ -128,7 +127,7 @@ func checkIfUserExistById(id string) (error, User) {
 	return nil, user
 }
 
-func checkIfLanguageIdExists(languageId uint) error {
+func CheckIfLanguageIdExists(languageId uint) error {
 	counter := int64(0)
 
 	if err := config.DbGlobal.Where("id = ?", languageId).First(&language.Language{}).Count(&counter); err != nil {

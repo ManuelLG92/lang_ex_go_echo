@@ -13,7 +13,7 @@ type User struct {
 	Password    string `json:"password" validate:"required,min=8"`
 	Birthday    string `json:"birthday"`
 	CountryID   int    `json:"country_id" validate:"required"`
-	GenderID    int    `json:"gender_id" db:"genders"  validate:"required"`
+	GenderID    int    `json:"gender_id"  validate:"required"`
 	Description string `json:"description" gorm:"type:text" validate:"max=255"`
 	IsAdmin     uint8  `gorm:"default:0"`
 	IsModerator uint8  `gorm:"default:0"`
@@ -25,6 +25,6 @@ type DTOUser struct {
 	Surname     string           `json:"user_surname"  validate:"required,min=2,max=150"`
 	Birthday    string           `json:"user_birthday"`
 	Country     *country.Country `json:"user_country_id" validate:"required"`
-	Gender      *Gender          `json:"user_gender_id" db:"genders"  validate:"required"`
+	Gender      *Gender          `json:"user_gender_id"  validate:"required"`
 	Description string           `json:"user_description" gorm:"type:text" validate:"max=255"`
 }
