@@ -1,13 +1,15 @@
 package user_infrastructure_controllers
 
 import (
-	"api.go.com/echo/config"
-	"api.go.com/echo/globals"
-	userpack "api.go.com/echo/user"
-	"api.go.com/echo/globals/password"
-	"github.com/labstack/echo/v4"
+	"fmt"
 	"net/http"
 	"strconv"
+
+	"api.go.com/echo/config"
+	"api.go.com/echo/globals"
+	"api.go.com/echo/globals/password"
+	userpack "api.go.com/echo/user"
+	"github.com/labstack/echo/v4"
 )
 
 func Show(c echo.Context) error {
@@ -64,10 +66,14 @@ func Store(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, errors)
 	}
 
+	if err := userpack.CheckGender(userInstance.Gender); err == false {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Gender %v not valid", userInstance.Gender))
+	}
+
 	counter := int64(0)
 	if err := config.DbGlobal.Where("email = ?", &userInstance.Email).Find(&userpack.User{}).Count(&counter); err != nil {
 		if counter > 0 {
-			return echo.NewHTTPError(http.StatusConflict, "User already registered with email %V", userInstance.Email)
+			return echo.NewHTTPError(http.StatusConflict, "User already registered with email %v", userInstance.Email)
 		}
 	}
 

@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/jinzhu/gorm"
+	"api.go.com/echo/config"
 )
 
 type LearningLanguages struct {
@@ -10,4 +11,8 @@ type LearningLanguages struct {
 	User       User
 	LanguageID uint   `json:"language_id_learning_languages"`
 	Level      string `json:"level_native_language" validate:"required,min=2,max=10" gorm:"type:varchar(15)"`
+}
+
+func MigrateLearningLanguagesTable() {
+	config.DbGlobal.AutoMigrate(&LearningLanguages{})
 }

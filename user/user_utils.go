@@ -6,7 +6,6 @@ import (
 	"api.go.com/echo/globals"
 	"api.go.com/echo/language"
 	"api.go.com/echo/user/user_models_dto"
-	"fmt"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
@@ -20,18 +19,9 @@ func (user User) MakeUserDTO() *DTOUser {
 	userDTO.Surname = user.Surname
 	userDTO.Description = user.Description
 	userDTO.Birthday = user.Birthday
-	err, gender := GetUserGender(user)
-	if err != nil {
-		fmt.Println(err)
-	}
-	userDTO.Gender = gender
+	userDTO.Gender = user.Gender
 	userDTO.Birthday = user.Birthday
-	err, countryInstance := getUserCountry(user)
-	if err != nil {
-		fmt.Println(err)
-	}
-	userDTO.Country = countryInstance
-
+	userDTO.Country = user.Country
 	return userDTO
 }
 
@@ -98,7 +88,7 @@ func (user User) MakeLearningLanguagesArrayDTO(learningLanguages []*LearningLang
 
 func getUserCountry(user User) (error, *country.Country) {
 	countryInstance := new(country.Country)
-	countryQuery := config.DbGlobal.First(&countryInstance, user.CountryID)
+	countryQuery := config.DbGlobal.First(&countryInstance, user.Country)
 
 	if countryQuery.Error != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Invalid country id"), countryInstance
@@ -109,7 +99,7 @@ func getUserCountry(user User) (error, *country.Country) {
 func GetUserGender(user User) (error, *Gender) {
 
 	gender := new(Gender)
-	if err := config.DbGlobal.First(&gender, user.GenderID); err != nil {
+	if err := config.DbGlobal.First(&gender, user.Gender); err != nil {
 		return err.Error, gender
 	}
 

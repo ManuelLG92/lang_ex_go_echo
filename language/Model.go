@@ -1,6 +1,7 @@
 package language
 
 import (
+	"api.go.com/echo/config"
 	"github.com/jinzhu/gorm"
 )
 
@@ -8,6 +9,10 @@ type Language struct {
 	gorm.Model
 	Name    string `json:"name" gorm:"type:varchar(50)"`
 	IsoCode string `json:"iso_code" gorm:"type:varchar(10)"`
+}
+
+func MigrateLanguagesTable() {
+	config.DbGlobal.AutoMigrate(&Language{})
 }
 
 /*  VALUES('English', 'en') ,
